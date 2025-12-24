@@ -11,9 +11,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
 @Getter
 @Setter
+@Entity
 @Table(uniqueConstraints = @UniqueConstraint(
         name = "unique_hotel_room_date",
         columnNames = {"hotel_id", "room_id", "date"}
@@ -43,7 +43,7 @@ public class Inventory {
     private Integer totalCount;
 
     @Column(nullable = false, precision = 5, scale = 2)
-    private Integer surgeFactor;
+    private BigDecimal surgeFactor;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price; //basePrice * surgeFactor

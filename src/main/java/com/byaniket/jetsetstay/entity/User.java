@@ -1,13 +1,17 @@
 package com.byaniket.jetsetstay.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.byaniket.jetsetstay.enums.Role;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
-@Data
+import java.util.Set;
+
+@Entity
+@Getter
+@Setter
+@Table(name = "app_user") //because postgres saves a user table by default
 public class User {
 
     @Id
@@ -21,5 +25,9 @@ public class User {
     private String password;
 
     private String name;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
 }

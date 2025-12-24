@@ -10,9 +10,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
 @Getter
 @Setter
+@Entity
 public class Room {
     //Not establishing One-to-Many mapping from Room to Inventory inside Room because if I want to check number of Rooms booked for a particular Room's type its better to check using Inventory table instead
 

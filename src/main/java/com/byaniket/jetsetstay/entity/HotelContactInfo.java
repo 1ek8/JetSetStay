@@ -15,5 +15,5 @@ public class HotelContactInfo {
 
     private String email;
 
-    private String Location;
+    private String location;
 }
