@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class Room {
+    //Not establishing One-to-Many mapping from Room to Inventory inside Room because if I want to check number of Rooms booked for a particular Room's type its better to check using Inventory table instead
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
