@@ -39,6 +39,9 @@ public class Hotel {
     @Embedded
     private HotelContactInfo contactInfo;
 
+    @Column(nullable = false)
+    private Boolean active;
+
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
     private List<Room> rooms;
 
