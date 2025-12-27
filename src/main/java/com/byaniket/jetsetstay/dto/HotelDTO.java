@@ -1,6 +1,7 @@
 package com.byaniket.jetsetstay.dto;
 
 import com.byaniket.jetsetstay.entity.HotelContactInfo;
+import com.byaniket.jetsetstay.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,8 @@ public record HotelDTO(
 
         HotelContactInfo contactInfo,
 
-        Boolean active
+        Boolean active,
+
+        User owner
 ) {
 }

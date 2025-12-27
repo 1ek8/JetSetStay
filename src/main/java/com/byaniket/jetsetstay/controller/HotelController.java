@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/hotels")
 @RequiredArgsConstructor
@@ -24,7 +26,33 @@ public class HotelController {
         return ResponseEntity.status(HttpStatus.CREATED).body(hotel);
     }
 
-    @GetMapping
+    @GetMapping("/{hotelId}")
+    public ResponseEntity<HotelDTO> getHotelById(@PathVariable Long hotelId) {
+        log.info("attemptiing to fetch info about hotel with id: {}", hotelId);
+        HotelDTO hotel = hotelService.getHotelById(hotelId);
+        return ResponseEntity.ok(hotel);
+    }
+
+    @PutMapping("/hotelId")
+    public ResponseEntity<HotelDTO> updateHotelById(@PathVariable Long hotelId, @RequestBody HotelDTO hotelDTO) {
+        log.info("attemptiing to update info about hotel with id: {}", hotelId);
+        HotelDTO hotel = hotelService.updateHotelById(hotelId, hotelDTO);
+        return ResponseEntity.ok(hotel);
+    }
+
+    @DeleteMapping("/hotelId")
+    public ResponseEntity<Boolean> deleteHotelById(@PathVariable Long hotelId) {
+        log.info("attemptiing to delete info about hotel with id: {}", hotelId);
+        Boolean success = hotelService.deleteHotelById(hotelId);
+        return ResponseEntity.ok(success);
+    }
+
+    @PatchMapping("/hotelId")
+    public ResponseEntity<Void> activateHotel(@PathVariable Long hotelId) {
+        log.info("attemptiing to activate hotel with id: {}", hotelId);
+        hotelService.activateHotel(hotelId);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
