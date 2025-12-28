@@ -21,6 +21,7 @@ public class RoomServiceImpl implements RoomService{
 
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
+    private final InventoryService inventoryService;
     private final ModelMapper modelMapper;
 
     @Override
@@ -31,6 +32,10 @@ public class RoomServiceImpl implements RoomService{
         Room room = modelMapper.map(roomDTO, Room.class);
         room.setHotel(hotel);
         room = roomRepository.save(room);
+
+        if(hotel.getActive()) { //if active initialize rooms for a year in inventory
+            inventoryService.initializeRoomForAYear(room);
+        }
         return modelMapper.map(room, RoomDTO.class);
     }
 

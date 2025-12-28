@@ -2,6 +2,7 @@ package com.byaniket.jetsetstay.service;
 
 import com.byaniket.jetsetstay.dto.HotelDTO;
 import com.byaniket.jetsetstay.entity.Hotel;
+import com.byaniket.jetsetstay.entity.Room;
 import com.byaniket.jetsetstay.exception.ResourceNotFound;
 import com.byaniket.jetsetstay.repository.HotelRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
+    private final InventoryService inventoryService;
 
     @Override
     public HotelDTO createNewHotel(HotelDTO hotelDto) {
@@ -56,8 +58,14 @@ public class HotelServiceImpl implements HotelService {
         if(!exists) throw new ResourceNotFound("Hotel not found with id: " + hotelId);
         hotelRepository.deleteById(hotelId);
 
+        //after deleting hotel all the remaining hotel entries in future should be deleted too
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFound("Hotel not found with id: " + hotelId));
+        for(Room room: hotel.getRooms()) {
+            inventoryService.deleteFutureInventories(room);
+        }
         return true;
-
     }
 
     @Override
@@ -67,6 +75,11 @@ public class HotelServiceImpl implements HotelService {
                 .findById(hotelId)
                 .orElseThrow(() -> new ResourceNotFound("Hotel not found with id: " + hotelId));
         hotel.setActive(true);
+
+        //needs to be done only once
+        for(Room room: hotel.getRooms()) {
+            inventoryService.initializeRoomForAYear(room);
+        }
     }
 
 
