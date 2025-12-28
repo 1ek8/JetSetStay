@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class RoomServiceImpl implements RoomService{
     private final ModelMapper modelMapper;
 
     @Override
+    @Transactional
     public RoomDTO createNewRoom(RoomDTO roomDTO, Long hotelId) {
         log.info("service: creating new room in hotel with id: {} ", hotelId);
         //check if hotel exists
@@ -59,10 +61,13 @@ public class RoomServiceImpl implements RoomService{
 //    }
 
     @Override
+    @Transactional
     public void deleteRoomById(Long roomId) {
         log.info("service: deleting room with id: {} ", roomId);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFound("Room with ID: {} not found" + roomId));
+        Room room = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new ResourceNotFound("Room with ID: {} not found" + roomId));
         roomRepository.deleteById(roomId);
-
+        inventoryService.deleteFutureInventories(room);
     }
 }

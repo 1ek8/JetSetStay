@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    @Transactional
     public HotelDTO updateHotelById(Long hotelId, HotelDTO hotelDTO) {
         log.info("service: hotel fetch with id: {}", hotelId);
         Hotel hotel = hotelRepository
@@ -52,6 +54,7 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteHotelById(Long hotelId) {
         log.info("service: hotel delete with id: {}", hotelId);
         boolean exists = hotelRepository.existsById(hotelId);
@@ -69,6 +72,7 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    @Transactional
     public void activateHotel(Long hotelId) {
         log.info("service: hotel activate with id: {}", hotelId);
         Hotel hotel = hotelRepository
