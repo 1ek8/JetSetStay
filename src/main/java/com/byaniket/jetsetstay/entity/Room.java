@@ -20,7 +20,7 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) //fetchtype is eager by default
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
 

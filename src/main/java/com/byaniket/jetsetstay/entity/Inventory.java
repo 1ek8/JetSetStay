@@ -1,6 +1,7 @@
 package com.byaniket.jetsetstay.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(uniqueConstraints = @UniqueConstraint(
         name = "unique_hotel_room_date",
         columnNames = {"hotel_id", "room_id", "date"}
