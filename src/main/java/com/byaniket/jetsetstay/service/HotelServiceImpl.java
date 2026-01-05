@@ -1,6 +1,8 @@
 package com.byaniket.jetsetstay.service;
 
 import com.byaniket.jetsetstay.dto.HotelDTO;
+import com.byaniket.jetsetstay.dto.HotelInfoDTO;
+import com.byaniket.jetsetstay.dto.RoomDTO;
 import com.byaniket.jetsetstay.entity.Hotel;
 import com.byaniket.jetsetstay.entity.Room;
 import com.byaniket.jetsetstay.exception.ResourceNotFound;
@@ -88,6 +90,19 @@ public class HotelServiceImpl implements HotelService {
         for(Room room: hotel.getRooms()) {
             inventoryService.initializeRoomForAYear(room);
         }
+    }
+
+    @Override
+    public HotelInfoDTO getHotelInfoById(Long hotelId) {
+        log.info("service: hotel info fetch with id: {}", hotelId);
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFound("Hotel not found with id: " + hotelId));
+
+        List<RoomDTO> rooms = hotel.getRooms()
+                .stream().map((element) -> modelMapper.map(element, RoomDTO.class))
+                .toList();
+        return new HotelInfoDTO(modelMapper.map(hotel, HotelDTO.class), rooms);
     }
 
 

@@ -4,6 +4,7 @@ import com.byaniket.jetsetstay.entity.Hotel;
 import com.byaniket.jetsetstay.entity.Inventory;
 import com.byaniket.jetsetstay.entity.Room;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,6 +29,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             @Param("roomsCount") Integer roomsCount,
-            @Param("dateCount") Long dateCount
+            @Param("dateCount") Long dateCount,
+            Pageable pageable
     );
 }
