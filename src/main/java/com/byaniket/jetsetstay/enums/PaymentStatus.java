@@ -2,7 +2,9 @@ package com.byaniket.jetsetstay.enums;
 
 public enum PaymentStatus {
 
-    PENDING,
+    RESERVED,
+    GUESTS_ADDED,
+    PAYMENT_PENDING,
     CONFIRMED,
     CANCELLED
 }
