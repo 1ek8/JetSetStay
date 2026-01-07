@@ -2,13 +2,11 @@ package com.byaniket.jetsetstay.service;
 
 import com.byaniket.jetsetstay.dto.BookingDTO;
 import com.byaniket.jetsetstay.dto.BookingRequestDTO;
+import com.byaniket.jetsetstay.dto.GuestDTO;
 import com.byaniket.jetsetstay.entity.*;
 import com.byaniket.jetsetstay.enums.BookingStatus;
 import com.byaniket.jetsetstay.exception.ResourceNotFound;
-import com.byaniket.jetsetstay.repository.BookingRepository;
-import com.byaniket.jetsetstay.repository.HotelRepository;
-import com.byaniket.jetsetstay.repository.InventoryRepository;
-import com.byaniket.jetsetstay.repository.RoomRepository;
+import com.byaniket.jetsetstay.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -23,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
+    private final GuestRepository guestRepository;
     private final ModelMapper modelMapper;
     private final InventoryRepository inventoryRepository;
     private final RoomRepository roomRepository;
@@ -34,7 +34,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDTO initializeBooking(BookingRequestDTO bookingRequestDTO) {
 
-            log.info("Initializing booking for hotel with id: {}, having rooms with id: {}, between {} and {}", bookingRequestDTO.hotelId(),
+        log.info("Initializing booking for hotel with id: {}, having rooms with id: {}, between {} and {}", bookingRequestDTO.hotelId(),
                     bookingRequestDTO.roomId(),
                     bookingRequestDTO.checkinDate(),
                     bookingRequestDTO.checkoutDate());
@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         for(Inventory inventory: inventoryList) {
-            inventory.setBookedCount(inventory.getBookedCount() + bookingRequestDTO.roomsCount());
+            inventory.setReservedCount(bookingRequestDTO.roomsCount());
         }
 
         inventoryRepository.saveAll(inventoryList);
@@ -79,6 +79,39 @@ public class BookingServiceImpl implements BookingService {
                 .build();
 
         booking = bookingRepository.save(booking);
+        return modelMapper.map(booking, BookingDTO.class);
+    }
+
+    @Override
+    public BookingDTO addGuests(Long bookingId, List<GuestDTO> guests) {
+        log.info("service: adding guests for booking with id: ", bookingId);
+
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
+                new ResourceNotFound("Booking not found with id: {}" + bookingId));
+
+        //if the booking was created 10mins before current time then it has expired
+        if(booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("Booking has already expired");
+        }
+
+        if(booking.getBookingStatus() != BookingStatus.RESERVED) {
+            throw new IllegalStateException("Booking is not under reserved state, cannot add guests");
+        }
+
+        User user = new User();
+        user.setId(1L);
+
+        for(GuestDTO guestDto: guests) {
+            Guest guest = modelMapper.map(guestDto, Guest.class);
+
+            guest.setUser(user);
+            guestRepository.save(guest);
+            booking.getGuests().add(guest);
+        }
+
+        booking.setBookingStatus(BookingStatus.GUESTS_ADDED);
+        booking = bookingRepository.save(booking);
+
         return modelMapper.map(booking, BookingDTO.class);
     }
 }
